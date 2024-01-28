@@ -16,4 +16,4 @@ if __name__ == '__main__':
         if n % j == 0:
             n /= j
         j += 2
-    print(n);
+    print(n)

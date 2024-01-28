@@ -90,6 +90,7 @@ def create_music_xml(notes_sequence, key_sig, time_sig= '4/4', file_path=None):
 
     # Write the music score to a MusicXML file
     fp = s.write('musicxml', fp=file_path)
+    s.show('musicxml')
     print(f'MusicXML written to {fp}')
 
 
@@ -99,7 +100,7 @@ def get_scale_from_key(key_obj):
     return [str(p) for p in key_obj.pitches]
 
 text = 'Lolol probably a bit diff type of algorithmic music'
-key_obj = key.Key('Eb')  # or any other key you want
+key_obj = key.Key('d')  # or any other key you want
 scale = get_scale_from_key(key_obj)
 rhythm_pattern = ['eighth', 'quarter', 'half']
 
@@ -111,12 +112,46 @@ create_music_xml(notes_sequence, key_obj, file_path='music_new_w.xml')
 
 
 
-text = 'How do I get my husband to stop going ‘Goblin Mode’ during sex?TLDR; My husband says ‘Goblin Mode activated’ when we start to have sex, growls and acts like a caveman, and then says ‘Goblin Mode off’ when we stop, and then pretends not to remember afterward.'
+#text = 'How do I get my husband to stop going ‘Goblin Mode’ during sex?TLDR; My husband says ‘Goblin Mode activated’ when we start to have sex, growls and acts like a caveman, and then says ‘Goblin Mode off’ when we stop, and then pretends not to remember afterward.'
+text = '''
+Love's vast ocean, a realm where emotions soar
+If words were notes, our love's the score,
+The irresistible call of the siren, beckoning evermore
+Seas torn asunder, the world from Moussa’s lore.
 
-key_obj = key.Key('ab')  # or any other key you want
+A heart set sail, without compass or oar
+Waves and wind sang to rich and poor
+Sirens silence along the shore,
+Luring hearts to depths unknown.
+
+A heart sets sail, guided by passion's core
+If waves held stories, they'd be ones we’ve sung,
+Sirens whisper tales from ancient lore,
+Their silence deafening as the nilpotent tongue.
+
+The sea, initially calm beneath the moon's glow
+A sailor's tale of work and woe,
+Yet within its depths, a storm begins to grow
+Transformed by love's enduring glow.
+
+Anticipation rises, a tempestuous flow
+Should he resist, or should he bend,
+A whirlwind fueled by longing for you, I know
+To the maiden's call, where paths extend?
+
+We race against time, the tide, to seize the day
+He chose her love, the siren's spell,
+The ship of love cannot forever in harbor stay
+A harmony he knows so well.
+
+Like rain, we cherish the moments, fleeting though they may be
+No longer lost in ocean's foam,
+The winds of time, never held at bay
+In love and land, he's found his home.'''
+key_obj = key.Key('c#')  # or any other key you want
 scale = get_scale_from_key(key_obj)
 rhythm_pattern = ['eighth', 'quarter', 'half']
 
 notes_sequence = parse_text_to_notes_modular(text, scale, rhythm_pattern)
 
-create_music_xml(notes_sequence, key_obj, time_sig = '3/4', file_path='music_goblin.xml')
+create_music_xml(notes_sequence, key_obj, time_sig = '3/4', file_path='music_g.xml')

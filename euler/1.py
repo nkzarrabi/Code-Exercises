@@ -6,6 +6,7 @@ Find the sum of all the multiples of 3 or 5 below 1000.
 '''
 
 
+
 n1 = 999 // 3
 n2 = 999 // 5
 n3 = 999 // 15
