@@ -1,49 +1,61 @@
+def generate_expressions(nums):
+    if len(nums) == 1:
+        yield str(nums[0])
+    else:
+        for i in range(len(nums)):
+            for j in range(i + 1, len(nums)):
+                for op in ['+', '-', '*', '/']:
+                    new_nums = nums[:i] + nums[i+1:j] + nums[j+1:]
+                    for left in generate_expressions([nums[i]]):
+                        for right in generate_expressions([nums[j]]):
+                            # Avoid duplicate expressions for commutative operations
+                            if op == '/' and abs(float(eval(right))) < 1e-3:
+                                continue  # Avoid division by zero
+                            expression = f"({left} {op} {right})"
+                            new_nums.append(expression)
+                            yield from generate_expressions(new_nums)
+                            new_nums.pop()
 
-import itertools
-#start with a list of however numbers
-def func(ints: list[int], target: int):
-    print('note: order of operations is not considered')
-    print('ops are sequential only')
-    print('if nothing is printed, assume this is impossible')
+def evaluate_expression(expression, target):
+    try:
+        return abs(eval(expression) - target) < 1e-6
+    except ZeroDivisionError:
+        return False
+
+def mathador_solver(numbers, target):
+    solutions = []
+    res = {}
+    for expression in generate_expressions(numbers):
+        if evaluate_expression(expression, target):
+            solutions.append(expression)
     
-    # Counter to keep track of the total number of combinations
-    total_combinations = 0
-    score = 0 
-    d = { '+':1 , '-': 2, '*': 1, '/': 3}
-    # can solve this recursively
-    def helper(acc: int, ints: list[int], ops: list[str], index: int):
-        nonlocal total_combinations
-        nonlocal score 
-        # ints is empty
-        if index >= len(ints):
-            if abs(acc - target) < 0.0001 :
-                # Increment the total_combinations counter
-                total_combinations += 1
+    # Print the total number of solutions and the solutions themselves
+    print(f"Total number of solutions: {len(solutions)}")
+    for solution in solutions:
+        score = calculate_score(solution)
+        #print(score)
+        #f"Solution: {solution} = {target}, score: {score}"
+        res[str(solution)] = score
+    return res 
 
-                # Print here
-                print('###################')
-                print(ints)
-                print(ops)
-            return
-                
-        # ints is not empty
-        # in that case, try running the 4 operators +, -, *, /
-        head = ints[index]
-        
-        helper(acc+head, ints, ops + ['+'], index+1)
-        helper(acc-head, ints, ops + ['-'], index+1)
-        helper(acc*head, ints, ops + ['*'], index+1)
-        if head != 0:
-            helper(acc/head, ints, ops + ['/'], index+1)
-        
-    for perm in itertools.permutations(ints):
-        head = perm[0]
-        helper(head, perm, [], 1)
-    
-    # Print the total number of combinations at the end
-    print(f'Total combinations that lead to the target value: {total_combinations, sc}')
 
-nums = [19, 8, 6, 3, 2]
+def calculate_score(solution):
+    score = 0
+    d = {'+': 1, '-': 2, '*': 1, '/': 3}
+    for char in solution:
+        if char in ['+', '-', '*', '/']:
+            score += d[char]
+    if score == 7:
+        score = 13
+    return score
+
+# Example usage
+numbers = [2, 3, 6, 8, 19]
 target = 32
+dz = (mathador_solver(numbers, target))
+da = dict(sorted(dz.items(), key=lambda x: x[1], reverse=True))
 
-func(nums, target)
+for k, v in da.items():
+    print(f"{k} = {target}, score: {v}")
+
+
