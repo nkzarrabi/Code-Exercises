@@ -11,7 +11,6 @@ def pythagorean_triplet(n):
         for b in range(a, n):
             c = n - a - b
             if a < b < c and a**2 + b**2 == c**2:
-                return a,b,c, a*b*c
-            
+                return a,b,c, a*b*c            
 
 print(pythagorean_triplet(1000))
