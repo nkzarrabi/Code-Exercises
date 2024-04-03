@@ -1,33 +1,54 @@
-// Number Spiral Diagonals 
-// Starting with the number 1 and moving to the right in a clockwise direction a 5 by 5 spiral is formed as follows:
-/*
-21 22 23 24 25
-20  7  8  9 10
-19  6  1  2 11
-18  5  4  3 12
-17 16 15 14 13
-*/
-
 #include <stdio.h>
 
-void spiral(int n) {
-    int sum = 1;
-    for (int i = 3; i <= n; i += 2) {
-        sum += 4*i*i - 6*i + 6;
+// Return (base^exponent) % modulo
+unsigned int powmod(unsigned long long base, unsigned int exponent, unsigned int modulo) {
+    unsigned long long result = 1;
+    while (exponent > 0) {
+        // Odd exponent?
+        if (exponent % 2 == 1) {
+            result = (result * base) % modulo;
+            exponent--;
+        } else {
+            base = (base * base) % modulo;
+            exponent /= 2;
+        }
     }
-    printf("%d\n", sum);
+    return result;
+}
+
+// Return modulo multiplicative inverse of a such that (a*inverse(a)) % p = 1
+unsigned int modInverse(unsigned int a, unsigned int modulo) {
+    // Fermat's little theorem: a^(p-2) is the modular multiplicative inverse of a modulo p
+    return powmod(a, modulo - 2, modulo);
 }
 
 int main() {
-    /* Enter your code here. Read input from STDIN. Print output to STDOUT */ 
-    /* The first line contains an integer T */
-    /* The next T lines each contain an integer N */
-    int t, n;
-    scanf("%d", &t);
-    for (int i = 0; i < t; i++) {
-        scanf("%d", &n);
-        spiral(n);
+    unsigned int tests;
+    scanf("%u", &tests);
+    while (tests--) {
+        unsigned long long n;
+        scanf("%llu", &n);
+
+        // Sum along the diagonals, initially for width = 1
+        unsigned long long sum = 1;
+
+        // Direct computation:
+        unsigned long long x = n / 2;
+        const unsigned int Modulo = 1000000007;
+
+        x %= Modulo;
+
+        // First part: 8 * x * (x + 1) * (2*x + 1) / 3
+        unsigned long long sharedTerm = (2*x * (x + 1)) % Modulo;
+        unsigned long long sum1 = ((4 * sharedTerm * (2*x + 1)) % Modulo) * modInverse(3, Modulo);
+
+        // Second part: 2 * x * (x + 1) + 4 * x + 1
+        unsigned long long sum2 = sharedTerm + 4*x + 1;
+
+        // sum = first part + second part
+        sum = (sum1 % Modulo + sum2 % Modulo) % Modulo;
+
+        printf("%llu\n", sum);
     }
+    return 0;
 }
-
-
