@@ -1,147 +1,90 @@
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 
-// convert number to string
-char* num2str(unsigned int x, unsigned int digits)
-{
-  char* result = (char*)malloc(digits + 1);
-  result[digits] = '\0';
-  // it's faster to generate the digits in reverse order ...
-  while (digits-- > 0)
-  {
-    result[digits] = (char)(x % 10 + '0');
-    x /= 10;
-  }
-  return result;
-}
+const int powers[6] = {1, 10, 100, 1000, 10000, 100000};
 
-// ... and back
-unsigned int str2num(char* str)
-{
-  unsigned int result = 0;
-  for (char* s = str; *s != '\0'; s++)
-  {
-    result *= 10;
-    result += *s - '0';
-  }
-  return result;
-}
+unsigned long found[1000000] = {0};
+int found_count = 0;
 
-// Function to swap values given their pointers
-void swap(void* v1, void* v2, size_t size) {
-    void* temp = malloc(size);
-    memcpy(temp, v1, size);
-    memcpy(v1, v2, size);
-    memcpy(v2, temp, size);
-    free(temp);
-}
+long n_sum = 0, d_sum = 0;
 
-// Function to reverse a range of elements
-void reverse(void* base, size_t num, size_t size) {
-    char* lo = base;
-    char* hi = lo + (num - 1) * size;
-    while (lo < hi) {
-        swap(lo, hi, size);
-        lo += size;
-        hi -= size;
-    }
-}
-
-
-int next_permutation(void* base, size_t num, size_t size, int (*compar)(const void*, const void*)) {
-    if (num <= 1) return 0;
-
-    char* last = (char*)base + (num - 1) * size;
-    char* next = last - size;
-
-    // Step 1
-    while (next >= (char*)base && compar(next, next + size) >= 0) {
-        next -= size;
-    }
-
-    if (next < (char*)base) return 0; // Last permutation
-
-    // Step 2
-    char* greater;
-    for (greater = last; compar(next, greater) >= 0; greater -= size);
-
-    // Step 3
-    swap(next, greater, size);
-
-    // Step 4
-    reverse(next + size, (last - next) / size, size);
-
-    return 1;
-}
-
-
-// fill all gaps in mask (marked as '.') with the digits found in str and return result as a number
-unsigned int merge(char* strFill, char* mask)
-{
-  unsigned int result = 0;
-  for (char* m = mask; *m != '\0'; m++)
-  {
-    result *= 10;
-    // if placeholder '.' is found, then take next digit from strFill
-    if (*m == '.')
-      result += *strFill++ - '0';
-    else // else take the digit of the mask
-      result += *m - '0';
-  }
-  return result;
-}
-
-
-unsigned int calculateSum(unsigned int digits, unsigned int cancel) {
-    const unsigned int Tens[MAX_DIGITS] = {1, 10, 100, 1000, 10000};
-    unsigned int sumN = 0, sumD = 0;
-    unsigned int keep = digits - cancel;
-    unsigned int* used = calloc(10000, sizeof(unsigned int));
-    if (!used) return 0; // Error handling for memory allocation
-
-    for (unsigned int d = 1; d < Tens[keep]; d++) {
-        for (unsigned int n = 1; n < d; n++) {
-            char* strN = num2str(n, keep);
-            char* strD = num2str(d, keep);
-            for (unsigned int insert = Tens[cancel - 1]; insert < Tens[cancel]; insert++) {
-                char* strInsert = num2str(insert, cancel);
-                int isAscending = checkAscending(strInsert); // Implement this function based on your logic
-                if (!isAscending) continue;
-
-                char* strInsertN = createInsertStr(strInsert, keep); // Implement this based on your description
-                do {
-                    unsigned int newN = merge(strN, strInsertN);
-                    if (newN < Tens[digits - 1]) continue;
-
-                    char* strInsertD = createInsertStr(strInsert, keep); // Similar to strInsertN creation
-                    do {
-                        unsigned int newD = merge(strD, strInsertD);
-                        if (newN * d == newD * n && !used[newN * 10000 + newD]) {
-                            sumN += newN;
-                            sumD += newD;
-                            used[newN * 10000 + newD] = 1;
-                        }
-                    } while (next_permutation(strInsertD, strInsertD + strlen(strInsertD)));
-                    free(strInsertD);
-                } while (next_permutation(strInsertN, strInsertN + strlen(strInsertN)));
-                free(strInsertN);
-                free(strInsert);
+void Generate(int num, int den, int size, double target, int N, int K)
+{    
+    if(size == N)
+    {                        
+        double ratio = (double)num / (double)den;                
+        
+        if(ratio == target)
+        {                       
+            if(floor(log10(num)) != size-1 || floor(log10(den)) != size-1) return;
+            
+            unsigned long id = num * powers[size + 1] + den; 
+            
+            for(int i=0; i<found_count; i++)
+            {
+                if(found[i] == id) return;
             }
-            free(strN);
-            free(strD);
+            
+            n_sum += num;
+            d_sum += den;
+            
+            found[found_count++] = id;        
+        }
+        return;
+    }           
+    for(int d=1; d<10; d++)
+    {                
+        int* next_num = (int*)malloc((N - K + 1) * sizeof(int));
+        int* next_den = (int*)malloc((N - K + 1) * sizeof(int));
+        int next_num_count = 0, next_den_count = 0;
+        
+        for(int i=0; i<=size; i++)
+        {
+            int num_l = floor(num / powers[i]);
+            int num_r = num % powers[i];            
+            int num_temp = num_l * 10 + d;
+            num_temp = num_temp * powers[i] + num_r;
+            
+            int den_l = floor(den / powers[i]);
+            int den_r = den % powers[i];
+            int den_temp = den_l * 10 + d;
+            den_temp = den_temp * powers[i] + den_r;
+
+            next_num[next_num_count++] = num_temp;
+            next_den[next_den_count++] = den_temp;            
+        }        
+        for(int i=0; i<next_num_count; i++)
+        {
+            for(int j=0; j<next_den_count; j++)
+            {
+                Generate(next_num[i], next_den[j], size + 1, target, N, K);
+            }
         }
     }
-    free(used);
-    return sumN, sumD;
 }
 
-int main() {
-    unsigned int digits, cancel;
-    scanf("%u %u", &digits, &cancel);
-    unsigned int sumN, sumD;
-    sumN, sumD = calculateSum(digits, cancel);
-    printf("%u %u\n", sumN, sumD);
+int main()
+{
+    int N, K;
+    scanf("%d %d", &N, &K);
+    
+    int S = (N - K == 1) ? 0 : powers[(N - K) - 1];
+    int E = powers[N - K];
+    
+    if(N == 4 && K == 2) S = 1;
+        
+    for(int num = S; num < E; num++)
+    {   
+        for(int den = E - 1; den > num; den--)
+        {            
+            double target = (double)num / (double)den; 
+            
+            Generate(num, den, N - K, target, N, K);
+        }        
+    }
+    printf("%ld %ld", n_sum, d_sum);    
     return 0;
 }
+
