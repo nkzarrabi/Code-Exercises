@@ -10,22 +10,35 @@
 
 //factorials of 0-9
 
+const int factorials[10] = {1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880};
+
+// Function to check if sum is divisible by i
+int isDivisible(int sum, int i) {
+    return sum % i == 0;
+}
+
+// Function to check if sum is equal to i
+int isEqual(int sum, int i) {
+    return sum == i;
+}
 
 int main() {
-    const int factorials[10] = {1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880};
-    int N;
-    scanf("%d", &N);
-    int highest = N;
-    int res = 0; 
-    /* Enter your code here. Read input from STDIN. Print output to STDOUT */    
-    for (int i = 10; i < highest; i++) {
+    int N, choice;
+    scanf("%d %d", &N, &choice); // Read N and the choice for condition
+    int res = 0;
+
+    // Choose the condition based on user input
+    int (*condition)(int, int) = (choice == 1) ? isEqual : isDivisible;
+
+    for (int i = 10; i < N; i++) {
         int sum = 0;
         int num = i;
         while (num > 0) {
             sum += factorials[num % 10];
             num /= 10;
         }
-        if (sum % i == 0){
+        
+        if (condition(sum, i)) {
             res += i;
         }
     }
