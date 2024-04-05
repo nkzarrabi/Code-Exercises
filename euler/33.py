@@ -41,3 +41,12 @@ numerator_sum = sum([fraction[0] for fraction in unique_fractions])
 denominator_sum = sum([fraction[1] for fraction in unique_fractions])
 
 print(numerator_sum, denominator_sum)
+
+#print product of fractions denominator 
+
+l = [tup for tup in unique_fractions]
+prod = (1,1)
+for i in l:
+    prod = (prod[0]*i[0], prod[1]*i[1])
+
+print(prod[1]/prod[0])  
