@@ -62,7 +62,11 @@ void Generate(int num, int den, int size, double target, int N, int K)
                 Generate(next_num[i], next_den[j], size + 1, target, N, K);
             }
         }
+        free(next_num);
+        free(next_den);
+        
     }
+    
 }
 
 int main()
