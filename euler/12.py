@@ -1,4 +1,5 @@
 import time
+import math
 
 
 def count_divisors(n):
@@ -6,7 +7,7 @@ def count_divisors(n):
     for i in range(1, int(n**0.5) + 1):
         if n % i == 0:
             count += 2  # i and n/i
-    if n**0.5 == int(n**0.5):  # Perfect square
+    if math.isclose(n**0.5, int(n**0.5), rel_tol=1e-09, abs_tol=0.0):  # Perfect square
         count -= 1  # Correct the double counting of the square root
     return count
 
