@@ -93,4 +93,12 @@ def test2():
     assert mul_sum2(x) == 48
 
 def main2():
-    file = 'input.tx
+    file = 'input.txt'
+    with open(file) as f:
+        s = f.read().strip()
+    print(mul_sum2(s))
+    test2()  # No need to print the result of test()
+
+if __name__ == '__main__':
+    #main()
+    main2()
