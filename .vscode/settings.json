@@ -3,5 +3,6 @@
         "string.h": "c",
         "xlocale": "c",
         "stdlib.h": "c"
-    }
+    },
+    "python.analysis.autoImportCompletions": true
 }
