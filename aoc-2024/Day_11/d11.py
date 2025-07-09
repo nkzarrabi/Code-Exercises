@@ -3,7 +3,7 @@ from collections import Counter
 def simulate_stone_blinks_optimized(input_file, blinks):
     with open(input_file, 'r') as file:
         # Read the initial stone arrangement from the file
-        stones = list(map(int, file.readline().strip().split()))
+        stones = list(map(int, file.readline(5_000_000).strip().split()))
     
     # Use a Counter to track the number of stones with each value
     stone_counts = Counter(stones)
